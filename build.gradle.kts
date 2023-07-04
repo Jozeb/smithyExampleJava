@@ -3,12 +3,17 @@ import software.amazon.smithy.gradle.SmithyExtension
 
 plugins {
     java
-    id("software.amazon.smithy").version("0.6.0")
+    id("software.amazon.smithy").version("0.7.0")
     id("org.openapi.generator").version("6.6.0")
 }
 
 buildscript {
 
+    repositories {
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+    }
     dependencies {
         classpath("software.amazon.smithy:smithy-openapi:1.33.0")
         // https://mvnrepository.com/artifact/software.amazon.smithy/smithy-openapi
@@ -27,7 +32,13 @@ dependencies {
     implementation("software.amazon.smithy:smithy-aws-traits:1.33.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
+    implementation("javax.ws.rs:jsr311-api:1.1.1")
+    implementation("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0-M1")
+
 }
+
 
 repositories {
     mavenLocal()
@@ -39,6 +50,7 @@ configure<SmithyExtension> {
     outputDirectory = File("${buildDir}/smithymodel/")
 }
 
+
 openApiGenerate {
     generatorName.set("java")
     inputSpec.set("${buildDir}/smithymodel/source/openapi/Weather.openapi.json")
@@ -49,7 +61,6 @@ openApiGenerate {
 }
 
 sourceSets["main"].java.srcDir(file("${buildDir}/generated"))
-
 
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
